@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const Canvas = require('canvas');
 const path = require('path');
 const { MessageAttachment } = require('discord.js');
+const wait = require('util').promisify(setTimeout);
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,7 +17,9 @@ module.exports = {
 		const background = await Canvas.loadImage(path.join(__dirname, 'wallpaper.jpg'));
 		context.drawImage(background, 0, 0, canvas.width, canvas.height);
 		const attachment = new MessageAttachment(canvas.toBuffer(), 'profile-image.png');
-		interaction.reply({ files: [attachment] });
+		await interaction.deferReply();
+		await wait(3000);
+		interaction.editReply({ files: [attachment] });
 
 /* 		if (user != null) {
 			await interaction.reply({ content :`User's tag: ${user.tag}\nUser's id: ${user.id}`, ephemeral: true});
